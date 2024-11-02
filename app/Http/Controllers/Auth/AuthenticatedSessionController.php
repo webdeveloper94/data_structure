@@ -24,11 +24,21 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // Foydalanuvchini autentifikatsiya qilish
         $request->authenticate();
 
+        // Sessionni yangilash
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Foydalanuvchini roliga qarab yo'naltirish
+        $user = Auth::user();
+
+        // Foydalanuvchi rolini tekshirish
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard'); // Admin uchun marshrut
+        } else {
+            return redirect()->route('user.dashboard'); // Oddiy foydalanuvchi uchun marshrut
+        }
     }
 
     /**
@@ -36,12 +46,15 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // Tizimdan chiqish
         Auth::guard('web')->logout();
 
+        // Sessionni tozalash
         $request->session()->invalidate();
 
+        // Tokenni yangilash
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/'); // Bosh sahifaga yo'naltirish
     }
 }

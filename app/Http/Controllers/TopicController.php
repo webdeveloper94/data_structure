@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\Lesson;
 use App\Models\Topic;
 
 use Illuminate\Http\Request;
@@ -36,10 +38,10 @@ class TopicController extends Controller
      */
     public function show($topic)
     {
-        //dd($topic);
-        $topics = Topic::find($id);
-
-        return view('topic', 'topics');
+         $topicm = Topic::where('id', $topic)->first();
+         $lessons = Lesson::where('id', $topicm->lesson_id)->first();
+         $topics = Topic::where('lesson_id', $lessons->id)->get();
+         return view('topic', compact('topicm', 'topics'));
     }
 
     /**
@@ -64,5 +66,10 @@ class TopicController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+
+    public function showtopic($id){
+        
     }
 }

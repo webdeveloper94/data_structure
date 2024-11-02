@@ -908,26 +908,26 @@ body.darkpagetheme .icons-right  {
     </div>
 
     <div class="tnb-right-section">
-      <!-- < user-anonymous -->
-      <a
-        
-        href="{{route('login')}}"
+     
+      @if (Auth::check())
+    <a
+        href="{{ route('dashboard') }}"
+        class="user-anonymous tnb-login-btn w3-bar-item w3-btn w3-hide bar-item-hover w3-right ws-light-green ga-top ga-top-login"
+        title="Go to Home"
+        aria-label="Go to Home"
+    >
+        Profil
+    </a>
+@else
+    <a
+        href="{{ route('login') }}"
         class="user-anonymous tnb-login-btn w3-bar-item w3-btn w3-hide bar-item-hover w3-right ws-light-green ga-top ga-top-login"
         title="Login to your account"
         aria-label="Login to your account"
-      >
+    >
         Kirish
-      </a>
-
-      <a
-        
-        href="https://profile.w3schools.com/sign-up"
-        class="user-anonymous tnb-signup-btn w3-bar-item w3-button w3-hide w3-right ws-green ws-hover-green ga-top ga-top-signup"
-        title="Sign Up to Improve Your Learning Experience"
-        aria-label="Sign Up to Improve Your Learning Experience"
-      >
-        Registratsiya
-      </a>
+    </a>
+@endif
       <!-- > user-anonymous -->
 
       <!-- < user-authenticated -->
@@ -1296,14 +1296,24 @@ function setThemeMode() {
         
     </span>      
   </div>
-  <a href="{{ route('lesson.show', ['lesson' => 'massive']) }}" class="ga-nav subtopnav_firstitem">Massivlar</a>
-  <a href="css/default.html" class="ga-nav" title="CSS Tutorial">Listlar (Linked Lists)</a>
+  <a href="{{route('home')}}" class="ga-nav" title="CSS Tutorial">Bosh sahifa</a>
+  @php
+    $menuItems = (new App\Http\Controllers\NavbarController)->getMenuItems();
+@endphp
+@foreach ($menuItems as $item)
+<a href="{{ route('lesson.show', ['lesson' => $item->title]) }}" class="ga-nav subtopnav_firstitem">{{$item->name}}</a>
+@endforeach
+  
+
+
+
+  {{-- <a href="css/default.html" class="ga-nav" title="CSS Tutorial">Listlar (Linked Lists)</a>
   <a href="js/default.html" class="ga-nav" title="JavaScript Tutorial">Staklar (Stacks)</a>
   <a href="sql/default.html" class="ga-nav" title="SQL Tutorial">Navbatlar (Queues)</a>
   <a href="python/default.html" class="ga-nav" title="Python Tutorial">Hash jadvallari (Hash Tables)</a>
   <a href="java/default.html" class="ga-nav" title="Java Tutorial">Daraxtlar (Trees)</a>
   <a href="php/default.html" class="ga-nav" title="PHP Tutorial">Grafiklar (Graphs)</a>
-  <a href="howto/default.html" class="ga-nav" title="How to">Binar qidiruv</a>
+  <a href="howto/default.html" class="ga-nav" title="How to">Binar qidiruv</a> --}}
   <a href="javascript:void(0)" style="width:50px;visibility:hidden;"></a>  
   <div id="btn_container_subtopnav">
     <div id="scroll_right_btn" class="w3-hide-medium w3-hide-small">

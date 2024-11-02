@@ -34,76 +34,9 @@
 
       </div>
 
-<h1>Massivlar<span class="color_h1"></span></h1>
+<h1>{{ $topicm->title }}<span class="color_h1"></span></h1>
 
-<div class="w3-panel w3-info intro">
-    <p>Massiv — bu bir xil turdagi elementlarni bir joyda saqlash imkonini beruvchi ma'lumotlar tuzilmasidir. Ular ko'plab dasturlash tillarida keng qo'llaniladi va ma'lumotlarni samarali tarzda boshqarish uchun qulay imkoniyatlar yaratadi. Massivlar yordamida biz katta hajmdagi ma'lumotlarni tartibga solish, saqlash va ularga kirish imkoniyatiga ega bo'lamiz.</p>
-</div>
-<hr>
-
-<h1>Massivning Turlari</h1>
-<p>Massivlar bir nechta turga bo'linadi. Ularning eng keng tarqalganlari:</p>
-<p>Bir o'lchovli massiv: Bu turdagi massivlar faqat bitta o'lchovga ega bo'lib, ular bir qator ma'lumotlarni saqlash imkonini beradi. Masalan, raqamlar yoki so'zlar ro'yxatini saqlashda ishlatiladi</p>
-<p>Ko'p o'lchovli massiv: Bu turdagi massivlar ikki yoki undan ko'p o'lchovga ega bo'lib, ular jadval ko'rinishida ma'lumotlarni saqlash imkonini beradi. Masalan, 2D massivlar (jadval) qator va ustunlar orqali ma'lumotlarni tartibga soladi.</p>
-
-<div class="w3-example">
-<h3>Misol(Massivlarning php da qo'llanishi)</h3>
-<div class="w3-code notranslate htmlHigh">
-    
-    // Oddiy massiv yaratish <br>
-    $mevalar = array("olma", "banan", "apelsin");<br><br>
-    
-    // Massiv elementlarini ko'rsatish <br>
-    echo $mevalar[0]; // olma <br>
-    echo $mevalar[1]; // banan <br>
-    echo $mevalar[2]; // apelsin <br>
-    
-    
-</div>
-<a class="w3-btn w3-margin-bottom" href="tryitfb35.html?filename=tryhtml_default" target="_blank">Try it Yourself &raquo;</a>
-</div>
-<hr>
-
-<h2>Massivlar dasturlashda bir qancha afzalliklarga ega:</h2>
-<p>Tezkor kirish: Massiv ichidagi ma'lumotlarga indekslar orqali tezkor kirish mumkin, bu esa ularni tezda qayta ishlash imkonini beradi.</p>
-<p>Resurslarni tejash: Massivlar yordamida bir xil turdagi ma'lumotlarni bir joyda saqlash orqali xotira resurslarini tejash mumkin.</p>
-<p>Tizimlash: Massivlar ma'lumotlarni tartibga solish va boshqarishni osonlashtiradi, bu esa dasturiy ta'minotning samaradorligini oshiradi.</p>
-
-
-<hr>
-<div id="midcontentadcontainer" style="overflow:auto;text-align:center">
-<!-- MidContent -->
-<!-- <p class="adtext">Advertisement</p> -->
-
-  <div id="adngin-mid_content-0"></div>
-  
-</div>
-<hr>
-<h2>Massivlar Qo'llanilishi</h2>
-<p>Massivlar dasturlashda juda ko'p joylarda qo'llaniladi. Ular:</p>
-<p>Matematika va statistikada: Raqamlar va statistik ma'lumotlarni saqlash uchun.</p>
-<p>O'yinlar va grafika dasturlarida: O'yin obyektlari va grafika elementlarini saqlash uchun.</p>
-<p>Ma'lumotlar bazalarida: Ma'lumotlarni saqlash va qayta ishlashda foydalaniladi.</p>
-
-
-<style>
-#img_mylearning {
-  max-width:100%;
-}
-</style>
-
-<br>
-<!--
-<a class="ws-btn w3-margin-bottom"
- href="https://profile.w3schools.com/log-in?redirect_url=https%3A%2F%2Fmy-learning.w3schools.com"
- target="_blank"
- style="font-size: 18px;padding-left:25px;padding-right:25px;
- font-family : 'Source Sans Pro', sans-serif;
- margin-top:6px;"
- >
- Sign up
-</a>
--->
+<p>{{ $topicm->content }}</p>
 <hr>
 
 
