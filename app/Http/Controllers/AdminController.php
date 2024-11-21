@@ -6,128 +6,115 @@ use App\Models\User;
 use App\Models\Topic;
 use App\Models\Lesson;
 use App\Models\Test;
+use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'admin']);
+    }
+
+    /**
+     * Handle the dashboard route and redirect admins.
+     */
+    public function dashboard(): \Illuminate\Http\RedirectResponse|\Illuminate\Contracts\View\View
+    {
+        if (auth()->user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+        return view('dashboard');
+    }
+
     /**
      * Display the admin dashboard.
      */
     public function index(): View
     {
-        try {
-            $totalUsers = User::count();
-            $totalTopics = Topic::count();
-            $activeLessons = Lesson::count();
-            $completedTests = Test::count();
-            $topics = Topic::all();
-            
-            // Get recent activities
-            $recentLessons = Lesson::latest()->take(3)->get()
-                ->map(function($lesson) {
-                    return [
-                        'description' => "New lesson added: {$lesson->title}",
-                        'created_at' => $lesson->created_at,
-                        'type' => 'lesson'
-                    ];
-                });
-            
-            $recentTests = Test::latest()->take(3)->get()
-                ->map(function($test) {
-                    return [
-                        'description' => "New test created: {$test->title}",
-                        'created_at' => $test->created_at,
-                        'type' => 'test'
-                    ];
-                });
-            
-            $recentActivities = $recentLessons->concat($recentTests)
-                ->sortByDesc('created_at')
-                ->take(5);
+        $totalUsers = User::count();
+        $totalTopics = Topic::count();
+        $totalLessons = Lesson::count();
+        $totalTests = Test::count();
+        $activeLessons = Lesson::where('status', 'published')->count();
+        $completedTests = Test::where('status', 'completed')->count();
 
-            return view('admin.admin', compact(
-                'totalUsers',
-                'totalTopics',
-                'activeLessons',
-                'completedTests',
-                'topics',
-                'recentActivities'
-            ));
-        } catch (\Exception $e) {
-            Log::error('Error in AdminController index method: ' . $e->getMessage(), [
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
+        $recentUsers = User::latest()->take(5)->get();
+        $recentLessons = Lesson::with('topic')->latest()->take(5)->get();
+        $recentTests = Test::latest()->take(5)->get();
+        $topics = Topic::all();
+
+        // Prepare recent activities
+        $recentActivities = collect();
+
+        // Add recent lessons to activities
+        foreach ($recentLessons as $lesson) {
+            $recentActivities->push([
+                'type' => 'lesson',
+                'description' => "New lesson added: {$lesson->title}",
+                'created_at' => $lesson->created_at,
             ]);
-
-            return view('admin.admin')->with('error', 'Error loading dashboard data');
         }
+
+        // Add recent tests to activities
+        foreach ($recentTests as $test) {
+            $recentActivities->push([
+                'type' => 'test',
+                'description' => "New test created: {$test->title}",
+                'created_at' => $test->created_at,
+            ]);
+        }
+
+        // Sort activities by created_at
+        $recentActivities = $recentActivities->sortByDesc('created_at')->take(10);
+
+        return view('admin.admin', compact(
+            'totalUsers',
+            'totalTopics',
+            'totalLessons',
+            'totalTests',
+            'activeLessons',
+            'completedTests',
+            'recentUsers',
+            'recentLessons',
+            'recentTests',
+            'recentActivities',
+            'topics'
+        ));
     }
 
     /**
-     * Store a new test.
+     * Store a new question.
      */
-    public function storeTest(Request $request)
+    public function storeQuestion(Request $request)
     {
         $request->validate([
-            'topic_id' => 'required|exists:topics,id',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'time_limit' => 'required|integer|min:1',
-            'passing_score' => 'required|integer|between:0,100',
-            'difficulty' => 'required|in:beginner,intermediate,advanced',
-            'questions' => 'required|array|min:1',
-            'questions.*.question' => 'required|string',
-            'questions.*.options' => 'required|array|size:3',
-            'questions.*.options.*' => 'required|string',
-            'questions.*.correct_answer' => 'required|integer|between:0,2',
-            'questions.*.points' => 'required|integer|min:1',
-            'questions.*.explanation' => 'nullable|string',
+            'test_id' => 'required|exists:tests,id',
+            'question_text' => 'required|string',
+            'options' => 'required|array|min:2',
+            'correct_answer' => 'required|integer|min:0',
         ]);
 
         try {
             DB::beginTransaction();
 
-            $test = Test::create([
-                'topic_id' => $request->topic_id,
-                'title' => $request->title,
-                'description' => $request->description,
-                'time_limit' => $request->time_limit,
-                'passing_score' => $request->passing_score,
-                'difficulty' => $request->difficulty,
-                'status' => 'draft',
+            $question = Question::create([
+                'test_id' => $request->test_id,
+                'question_text' => $request->question_text,
+                'options' => json_encode($request->options),
+                'correct_answer' => $request->correct_answer,
             ]);
-
-            foreach ($request->questions as $index => $questionData) {
-                $test->questions()->create([
-                    'question' => $questionData['question'],
-                    'options' => $questionData['options'],
-                    'correct_answer' => $questionData['options'][$questionData['correct_answer']],
-                    'points' => $questionData['points'],
-                    'explanation' => $questionData['explanation'] ?? null,
-                    'order' => $index + 1,
-                ]);
-            }
 
             DB::commit();
-
-            return response()->json([
-                'message' => 'Test created successfully',
-                'test' => $test->load('questions'),
-            ]);
+            return response()->json(['message' => 'Question created successfully', 'question' => $question]);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error creating test: ' . $e->getMessage(), [
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return response()->json([
-                'message' => 'Error creating test: ' . $e->getMessage(),
-            ], 500);
+            Log::error('Error creating question: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to create question'], 500);
         }
     }
 }

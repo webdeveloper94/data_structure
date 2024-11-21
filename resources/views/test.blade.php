@@ -1,7 +1,6 @@
 <x-main>
 
-
-<form action="{{ route('test.store') }}" method="POST">
+<form action="{{ route('admin.tests.store') }}" method="POST">
     @csrf
     @foreach ($questions as $question)
         <div>

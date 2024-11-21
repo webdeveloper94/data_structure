@@ -22,7 +22,7 @@ class LessonController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create() 
     {
         $topics = Topic::all();
         return view('admin.lessons.create', compact('topics'));

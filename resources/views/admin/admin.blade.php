@@ -126,19 +126,19 @@
                 <div class="card-body">
                     <h3 class="card-title mb-4">Quick Actions</h3>
                     <div class="list-group">
-                        <a href="{{ route('users.index') }}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action d-flex align-items-center">
                             <i class="bi bi-people me-3"></i>
                             Manage Users
                         </a>
-                        <a href="{{ route('topics.index') }}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <a href="{{ route('admin.topics.index') }}" class="list-group-item list-group-item-action d-flex align-items-center">
                             <i class="bi bi-folder me-3"></i>
                             Manage Topics
                         </a>
-                        <a href="{{ route('lessons.index') }}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <a href="{{ route('admin.lessons.index') }}" class="list-group-item list-group-item-action d-flex align-items-center">
                             <i class="bi bi-book me-3"></i>
                             Manage Lessons
                         </a>
-                        <a href="{{ route('tests.index') }}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <a href="{{ route('admin.tests.index') }}" class="list-group-item list-group-item-action d-flex align-items-center">
                             <i class="bi bi-check2-square me-3"></i>
                             Manage Tests
                         </a>
@@ -190,7 +190,7 @@
                 <h5 class="modal-title" id="addTopicModalLabel">Add New Topic</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('topics.store') }}" method="POST" id="addTopicForm">
+            <form action="{{ route('admin.topics.store') }}" method="POST" id="addTopicForm">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-4">
@@ -235,7 +235,7 @@
                 <h5 class="modal-title" id="addLessonModalLabel">Add New Lesson</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('lessons.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.lessons.store') }}" method="POST" enctype="multipart/form-data" id="addLessonForm">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-4">
@@ -325,36 +325,59 @@
                         <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                     </div>
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="time_limit" class="form-label">Time Limit (minutes)</label>
                                 <input type="number" class="form-control" id="time_limit" name="time_limit" value="30" required>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="passing_score" class="form-label">Passing Score (%)</label>
                                 <input type="number" class="form-control" id="passing_score" name="passing_score" value="70" required>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                    </div>
+
+                    <!-- Questions Section -->
+                    <div id="questions-container">
+                        <h4 class="mt-4 mb-3">Questions</h4>
+                        <div class="question-block border rounded p-3 mb-3">
                             <div class="mb-3">
-                                <label for="difficulty" class="form-label">Difficulty</label>
-                                <select class="form-select" id="difficulty" name="difficulty" required>
-                                    <option value="beginner">Beginner</option>
-                                    <option value="intermediate">Intermediate</option>
-                                    <option value="advanced">Advanced</option>
-                                </select>
+                                <label class="form-label">Question 1</label>
+                                <input type="text" class="form-control" name="questions[0][text]" required placeholder="Enter question">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Options</label>
+                                <div class="input-group mb-2">
+                                    <div class="input-group-text">
+                                        <input type="radio" name="questions[0][correct_option]" value="a" required>
+                                    </div>
+                                    <input type="text" class="form-control" name="questions[0][options][a]" placeholder="Option A" required>
+                                </div>
+                                <div class="input-group mb-2">
+                                    <div class="input-group-text">
+                                        <input type="radio" name="questions[0][correct_option]" value="b" required>
+                                    </div>
+                                    <input type="text" class="form-control" name="questions[0][options][b]" placeholder="Option B" required>
+                                </div>
+                                <div class="input-group mb-2">
+                                    <div class="input-group-text">
+                                        <input type="radio" name="questions[0][correct_option]" value="c" required>
+                                    </div>
+                                    <input type="text" class="form-control" name="questions[0][options][c]" placeholder="Option C" required>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div id="questionsContainer">
-                        <!-- Questions will be added here dynamically -->
-                    </div>
-                    <button type="button" class="btn btn-secondary" onclick="addQuestion()">Add Question</button>
-                    <div class="mt-3">
+
+                    <button type="button" class="btn btn-outline-primary mb-3" onclick="addNewQuestion()">
+                        <i class="bi bi-plus-circle me-2"></i>Add Question
+                    </button>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Create Test</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -479,47 +502,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let questionCount = 0;
 
-    function addQuestion() {
+    function addNewQuestion() {
         questionCount++;
         const questionHtml = `
             <div class="question-block border rounded p-3 mb-3">
-                <h5>Question ${questionCount}</h5>
                 <div class="mb-3">
-                    <label class="form-label">Question Text</label>
-                    <textarea class="form-control" name="questions[${questionCount}][question]" required></textarea>
+                    <label class="form-label">Question ${questionCount + 1}</label>
+                    <input type="text" class="form-control" name="questions[${questionCount}][text]" required placeholder="Enter question">
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Option A</label>
-                    <input type="text" class="form-control" name="questions[${questionCount}][options][]" required>
+                <div class="mb-2">
+                    <label class="form-label">Options</label>
+                    <div class="input-group mb-2">
+                        <div class="input-group-text">
+                            <input type="radio" name="questions[${questionCount}][correct_option]" value="a" required>
+                        </div>
+                        <input type="text" class="form-control" name="questions[${questionCount}][options][a]" placeholder="Option A" required>
+                    </div>
+                    <div class="input-group mb-2">
+                        <div class="input-group-text">
+                            <input type="radio" name="questions[${questionCount}][correct_option]" value="b" required>
+                        </div>
+                        <input type="text" class="form-control" name="questions[${questionCount}][options][b]" placeholder="Option B" required>
+                    </div>
+                    <div class="input-group mb-2">
+                        <div class="input-group-text">
+                            <input type="radio" name="questions[${questionCount}][correct_option]" value="c" required>
+                        </div>
+                        <input type="text" class="form-control" name="questions[${questionCount}][options][c]" placeholder="Option C" required>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Option B</label>
-                    <input type="text" class="form-control" name="questions[${questionCount}][options][]" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Option C</label>
-                    <input type="text" class="form-control" name="questions[${questionCount}][options][]" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Correct Answer</label>
-                    <select class="form-select" name="questions[${questionCount}][correct_answer]" required>
-                        <option value="0">Option A</option>
-                        <option value="1">Option B</option>
-                        <option value="2">Option C</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Points</label>
-                    <input type="number" class="form-control" name="questions[${questionCount}][points]" value="1" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Explanation</label>
-                    <textarea class="form-control" name="questions[${questionCount}][explanation]"></textarea>
-                </div>
-                <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">Remove Question</button>
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.parentElement.remove()">
+                    <i class="bi bi-trash me-2"></i>Remove Question
+                </button>
             </div>
         `;
-        document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', questionHtml);
+        document.getElementById('questions-container').insertAdjacentHTML('beforeend', questionHtml);
     }
 
     // Test form submission handling
@@ -542,7 +559,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (response.ok) {
                     showAlert('Test created successfully!', 'success', this);
                     this.reset();
-                    document.getElementById('questionsContainer').innerHTML = '';
+                    document.getElementById('questions-container').innerHTML = '';
                     questionCount = 0;
                     
                     // Close the modal
