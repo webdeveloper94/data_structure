@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Log;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -24,21 +25,25 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // Foydalanuvchini autentifikatsiya qilish
         $request->authenticate();
-
-        // Sessionni yangilash
         $request->session()->regenerate();
 
-        // Foydalanuvchini roliga qarab yo'naltirish
         $user = Auth::user();
 
-        // Foydalanuvchi rolini tekshirish
-        if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard'); // Admin uchun marshrut
-        } else {
-            return redirect()->route('user.dashboard'); // Oddiy foydalanuvchi uchun marshrut
+        Log::info('User authenticated', [
+            'user_id' => $user->id,
+            'is_admin' => $user->is_admin,
+            'role' => $user->role
+        ]);
+
+        // Check both is_admin flag and role
+        if ($user->is_admin || $user->role === 'admin') {
+            Log::info('Redirecting to admin dashboard');
+            return redirect()->route('admin.dashboard');
         }
+
+        Log::info('Redirecting to welcome page');
+        return redirect()->route('home');
     }
 
     /**
@@ -46,15 +51,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        // Tizimdan chiqish
         Auth::guard('web')->logout();
 
-        // Sessionni tozalash
         $request->session()->invalidate();
-
-        // Tokenni yangilash
         $request->session()->regenerateToken();
 
-        return redirect('/'); // Bosh sahifaga yo'naltirish
+        return redirect('/');
     }
 }

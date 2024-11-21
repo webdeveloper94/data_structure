@@ -24,7 +24,8 @@ class LessonController extends Controller
      */
     public function create()
     {
-        //
+        $topics = Topic::all();
+        return view('admin.lessons.create', compact('topics'));
     }
 
     /**
@@ -32,7 +33,41 @@ class LessonController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'topic_id' => 'required|exists:topics,id',
+            'description' => 'required|string',
+            'content' => 'required|string',
+            'difficulty_level' => 'required|in:beginner,intermediate,advanced',
+            'estimated_time' => 'required|integer|min:1',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048'
+        ]);
+
+        try {
+            $lesson = new Lesson();
+            $lesson->title = $request->title;
+            $lesson->topic_id = $request->topic_id;
+            $lesson->description = $request->description;
+            $lesson->content = $request->content;
+            $lesson->difficulty_level = $request->difficulty_level;
+            $lesson->estimated_time = $request->estimated_time;
+            
+            // Handle file upload if attachment is present
+            if ($request->hasFile('attachment')) {
+                $file = $request->file('attachment');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('lesson_attachments', $filename, 'public');
+                $lesson->attachment = $path;
+            }
+            
+            $lesson->save();
+
+            return redirect()->back()->with('success', 'Lesson created successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Error creating lesson: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**

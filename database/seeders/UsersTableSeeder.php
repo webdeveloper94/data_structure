@@ -14,6 +14,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'akobir@gmail.com',
             'password' => Hash::make('Aspire578'), // Parolni shifrlash
             'role' => 'admin',
+            'is_admin' => true,
         ]);
 
         // Oddiy foydalanuvchi
@@ -22,6 +23,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'tulkin@gmail.com',
             'password' => Hash::make('Aspire578'), // Parolni shifrlash
             'role' => 'user',
+            'is_admin' => false,
         ]);
     }
 }

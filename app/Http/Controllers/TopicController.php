@@ -30,7 +30,32 @@ class TopicController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:topics,name',
+            'description' => 'required|string',
+            'order' => 'required|integer|min:1',
+            'status' => 'required|in:active,draft,archived'
+        ]);
+
+        try {
+            $topic = new Topic();
+            $topic->name = $request->name;
+            $topic->description = $request->description;
+            $topic->order = $request->order;
+            $topic->status = $request->status;
+            $topic->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Topic created successfully!',
+                'topic' => $topic
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error creating topic: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
