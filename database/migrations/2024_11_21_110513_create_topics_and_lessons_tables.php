@@ -41,7 +41,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('topic_id')->constrained()->onDelete('cascade');
             $table->string('title');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->longText('content');
             $table->enum('difficulty_level', ['beginner', 'intermediate', 'advanced'])->default('beginner');
             $table->integer('estimated_time')->nullable(); // in minutes

@@ -1196,7 +1196,7 @@ function setThemeMode() {
   line-height: 1.5;
 }
 #subtopnav a:hover,#subtopnav a:focus,#subtopnav a:active{
-  background-color:#000000 !important;
+  background-color: #000000 !important;
   color:#ffffff !important;
 }
 #subtopnav a.active{
@@ -1301,7 +1301,7 @@ function setThemeMode() {
     $menuItems = (new App\Http\Controllers\NavbarController)->getMenuItems();
 @endphp
 @foreach ($menuItems as $item)
-<a href="{{ route('lesson.show', ['lesson' => $item->title]) }}" class="ga-nav subtopnav_firstitem">{{$item->name}}</a>
+<a href="{{ route('user.topics.show', ['topic' => $item->id]) }}" class="ga-nav subtopnav_firstitem">{{$item->name}}</a>
 @endforeach
   
 
@@ -1649,8 +1649,6 @@ document.body.addEventListener("click", function(event) {
       </div>
     </div>
   </div>
-</div>
-
 </div>
 
 </div>

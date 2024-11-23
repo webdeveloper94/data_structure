@@ -19,24 +19,9 @@ class TestController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'topic_id' => 'required|exists:topics,id',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'time_limit' => 'required|integer|min:1',
-            'passing_score' => 'required|integer|between:0,100',
-            'questions' => 'required|array|min:1',
-            'questions.*.text' => 'required|string',
-            'questions.*.options' => 'required|array',
-            'questions.*.options.*' => 'required|string',
-            'questions.*.correct_option' => 'required|in:a,b,c',
-            'answers' => 'required|array',
-            'answers.*' => 'required|string'
-        ]);
-
         try {
             DB::beginTransaction();
-
+            
             // Create the test
             $test = Test::create([
                 'topic_id' => $request->topic_id,
@@ -44,45 +29,27 @@ class TestController extends Controller
                 'description' => $request->description,
                 'time_limit' => $request->time_limit,
                 'passing_score' => $request->passing_score,
-                'status' => 'active'
+                'status' => 'draft',
             ]);
 
-            // Create questions
+            // Create questions for this test
             foreach ($request->questions as $questionData) {
-                $question = Question::create([
+                Question::create([
                     'test_id' => $test->id,
                     'question' => $questionData['text'],
-                    'option_a' => $questionData['options']['a'],
-                    'option_b' => $questionData['options']['b'],
-                    'option_c' => $questionData['options']['c'],
-                    'correct_option' => $questionData['correct_option']
+                    'options' => $questionData['options'],
+                    'correct_answer' => $questionData['correct_option'],
+                    'points' => 1, // Default points
+                    'order' => 1 // Default order
                 ]);
             }
 
-            $correctAnswers = 0;
-            $userAnswers = [];
-
-            foreach ($request->input('answers') as $questionId => $answer) {
-                $question = Question::find($questionId);
-                $userAnswers[$questionId] = $answer;
-
-                if ($question->correct_option === $answer) {
-                    $correctAnswers++;
-                }
-            }
-
-            $result = new Result();
-            $result->user_id = Auth::id();
-            $result->correct_answers = $correctAnswers;
-            $result->wrong_answers = 10 - $correctAnswers; // 10 ta savol
-            $result->user_answers = json_encode($userAnswers);
-            $result->save();
-
             DB::commit();
-            return redirect()->route('results', $result->id);
+            return response()->json(['success' => true, 'message' => 'Test created successfully!']);
+
         } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['message' => 'Error creating test: ' . $e->getMessage()], 500);
+            DB::rollback();
+            return response()->json(['success' => false, 'message' => 'Error creating test: ' . $e->getMessage()]);
         }
     }
 

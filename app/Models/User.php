@@ -20,6 +20,9 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'status',
+        'blocked_until',
+        'block_reason',
     ];
 
     /**
@@ -40,6 +43,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'blocked_until' => 'datetime',
     ];
 
     /**
@@ -49,4 +53,32 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    /**
+     * Check if the user is blocked.
+     */
+    public function isBlocked(): bool
+    {
+        if ($this->status === 'active') {
+            return false;
+        }
+        
+        if ($this->status === 'banned') {
+            return true;
+        }
+        
+        if ($this->status === 'blocked' && $this->blocked_until) {
+            return now()->lt($this->blocked_until);
+        }
+        
+        return false;
+    }
+
+    /**
+     * Check if the user is an admin.
+     */
+    // public function isAdmin(): bool
+    // {
+    //     return $this->role === 'admin';
+    // }
 }

@@ -5,21 +5,21 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="display-5 fw-bold">Admin Dashboard</h1>
-            <p class="text-muted">Manage your data structure learning platform</p>
+            <h1 class="display-5 fw-bold">Adminstrator sahifasi</h1>
+            <p class="text-muted">Ma'lumotlar tuzilmangizni o'rganish platformasini boshqarish</p>
         </div>
         <div class="d-flex gap-3">
             <button type="button" class="btn btn-light d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addTopicModal">
                 <i class="bi bi-folder-plus me-2"></i>
-                New Topic
+                Yangi dars
             </button>
             <button type="button" class="btn btn-light d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addLessonModal">
                 <i class="bi bi-plus-lg me-2"></i>
-                New Lesson
+                Yangi mavzu
             </button>
             <button type="button" class="btn btn-light d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#createTestModal">
                 <i class="bi bi-plus-lg me-2"></i>
-                New Test
+                Yangi test
             </button>
         </div>
     </div>
@@ -35,8 +35,10 @@
                             <i class="bi bi-people-fill text-white fs-4"></i>
                         </div>
                         <div>
-                            <h6 class="card-subtitle mb-1 text-muted">Total Users</h6>
-                            <h2 class="card-title mb-0">{{ $totalUsers }}</h2>
+                            <a href="{{ route('admin.users.index') }}" class="text-decoration-none">
+                                <h6 class="card-subtitle mb-1 text-muted">Foydalanuvchilar</h6>
+                                <h2 class="card-title mb-0">{{ $totalUsers }}</h2>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -52,7 +54,7 @@
                             <i class="bi bi-folder-fill text-white fs-4"></i>
                         </div>
                         <div>
-                            <h6 class="card-subtitle mb-1 text-muted">Total Topics</h6>
+                            <h6 class="card-subtitle mb-1 text-muted">Darslar</h6>
                             <h2 class="card-title mb-0">{{ $totalTopics }}</h2>
                         </div>
                     </div>
@@ -69,7 +71,7 @@
                             <i class="bi bi-book-fill text-white fs-4"></i>
                         </div>
                         <div>
-                            <h6 class="card-subtitle mb-1 text-muted">Active Lessons</h6>
+                            <h6 class="card-subtitle mb-1 text-muted">Mavzular</h6>
                             <h2 class="card-title mb-0">{{ $activeLessons }}</h2>
                         </div>
                     </div>
@@ -86,7 +88,7 @@
                             <i class="bi bi-check2-square text-white fs-4"></i>
                         </div>
                         <div>
-                            <h6 class="card-subtitle mb-1 text-muted">Completed Tests</h6>
+                            <h6 class="card-subtitle mb-1 text-muted">Testlar</h6>
                             <h2 class="card-title mb-0">{{ $completedTests }}</h2>
                         </div>
                     </div>
@@ -98,7 +100,7 @@
     <!-- Recent Activities -->
     <div class="card border-0 shadow-sm">
         <div class="card-body">
-            <h3 class="card-title mb-4">Recent Activities</h3>
+            <h3 class="card-title mb-4">Oxirgi amallar</h3>
             <div class="position-relative activity-timeline">
                 @foreach($recentActivities as $activity)
                     <div class="d-flex mb-4">
@@ -124,23 +126,23 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <h3 class="card-title mb-4">Quick Actions</h3>
+                    <h3 class="card-title mb-4">Boshqaruv paneli</h3>
                     <div class="list-group">
-                        <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <a href="{{ route('admin.users.index') }}" class="list-group-item list-group-item-action d-flex align-items-center">
                             <i class="bi bi-people me-3"></i>
-                            Manage Users
+                            Foydalanuvchilarni boshqarish
                         </a>
                         <a href="{{ route('admin.topics.index') }}" class="list-group-item list-group-item-action d-flex align-items-center">
                             <i class="bi bi-folder me-3"></i>
-                            Manage Topics
+                            Darslarni ko'rish
                         </a>
                         <a href="{{ route('admin.lessons.index') }}" class="list-group-item list-group-item-action d-flex align-items-center">
                             <i class="bi bi-book me-3"></i>
-                            Manage Lessons
+                            Mavzularni ko'rish
                         </a>
                         <a href="{{ route('admin.tests.index') }}" class="list-group-item list-group-item-action d-flex align-items-center">
                             <i class="bi bi-check2-square me-3"></i>
-                            Manage Tests
+                            Testlarni ko'rish
                         </a>
                     </div>
                 </div>
@@ -200,7 +202,7 @@
 
                     <div class="mb-4">
                         <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                     </div>
 
                     <div class="mb-4">
@@ -239,12 +241,12 @@
                 @csrf
                 <div class="modal-body">
                     <div class="mb-4">
-                        <label for="title" class="form-label">Lesson Title</label>
+                        <label for="title" class="form-label">Lesson Title <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="title" name="title" required>
                     </div>
 
                     <div class="mb-4">
-                        <label for="topic_id" class="form-label">Topic</label>
+                        <label for="topic_id" class="form-label">Topic <span class="text-danger">*</span></label>
                         <select class="form-select" id="topic_id" name="topic_id" required>
                             <option value="">Select a topic</option>
                             @foreach($topics as $topic)
@@ -255,29 +257,30 @@
 
                     <div class="mb-4">
                         <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                     </div>
 
                     <div class="mb-4">
-                        <label for="content" class="form-label">Lesson Content</label>
+                        <label for="content" class="form-label">Lesson Content <span class="text-danger">*</span></label>
                         <textarea class="form-control" id="content" name="content" rows="6" required></textarea>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-4">
-                                <label for="difficulty_level" class="form-label">Difficulty Level</label>
-                                <select class="form-select" id="difficulty_level" name="difficulty_level" required>
-                                    <option value="beginner">Beginner</option>
-                                    <option value="intermediate">Intermediate</option>
-                                    <option value="advanced">Advanced</option>
-                                </select>
+                                <label for="order" class="form-label">Order <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="order" name="order" min="1" value="1" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-4">
-                                <label for="estimated_time" class="form-label">Estimated Time (minutes)</label>
-                                <input type="number" class="form-control" id="estimated_time" name="estimated_time" required min="1">
+                                <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="">Select status</option>
+                                    <option value="draft">Draft</option>
+                                    <option value="published">Published</option>
+                                    <option value="archived">Archived</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -289,8 +292,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Create Lesson</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add Lesson</button>
                 </div>
             </form>
         </div>
@@ -302,7 +305,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="createTestModalLabel">Create New Test</h5>
+                <h5 class="modal-title" id="createTestModalLabel">Yangi test qo'shish</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -322,7 +325,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
@@ -387,15 +390,104 @@
 
 @push('scripts')
 <script>
+let questionCount = 0;
+
+function addNewQuestion() {
+    questionCount++;
+    const questionHtml = `
+        <div class="question-block border rounded p-3 mb-3">
+            <div class="mb-3">
+                <label class="form-label">Question ${questionCount + 1}</label>
+                <input type="text" class="form-control" name="questions[${questionCount}][text]" required placeholder="Enter question">
+            </div>
+            <div class="mb-2">
+                <label class="form-label">Options</label>
+                <div class="input-group mb-2">
+                    <div class="input-group-text">
+                        <input type="radio" name="questions[${questionCount}][correct_option]" value="a" required>
+                    </div>
+                    <input type="text" class="form-control" name="questions[${questionCount}][options][a]" placeholder="Option A" required>
+                </div>
+                <div class="input-group mb-2">
+                    <div class="input-group-text">
+                        <input type="radio" name="questions[${questionCount}][correct_option]" value="b" required>
+                    </div>
+                    <input type="text" class="form-control" name="questions[${questionCount}][options][b]" placeholder="Option B" required>
+                </div>
+                <div class="input-group mb-2">
+                    <div class="input-group-text">
+                        <input type="radio" name="questions[${questionCount}][correct_option]" value="c" required>
+                    </div>
+                    <input type="text" class="form-control" name="questions[${questionCount}][options][c]" placeholder="Option C" required>
+                </div>
+            </div>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeQuestion(this)">
+                <i class="bi bi-trash me-2"></i>Remove Question
+            </button>
+        </div>
+    `;
+    document.getElementById('questions-container').insertAdjacentHTML('beforeend', questionHtml);
+}
+
+function removeQuestion(button) {
+    const questionBlock = button.closest('.question-block');
+    questionBlock.remove();
+    updateQuestionNumbers();
+}
+
+function updateQuestionNumbers() {
+    const questions = document.querySelectorAll('.question-block');
+    questions.forEach((question, index) => {
+        const label = question.querySelector('.form-label');
+        label.textContent = `Question ${index + 1}`;
+        
+        // Update input names
+        const questionInput = question.querySelector('input[name^="questions"][name$="[text]"]');
+        const optionInputs = question.querySelectorAll('input[name^="questions"][name*="options"]');
+        const radioInputs = question.querySelectorAll('input[type="radio"]');
+        
+        questionInput.name = `questions[${index}][text]`;
+        optionInputs.forEach(input => {
+            const option = input.name.match(/\[options\]\[([abc])\]/)[1];
+            input.name = `questions[${index}][options][${option}]`;
+        });
+        radioInputs.forEach(radio => {
+            radio.name = `questions[${index}][correct_option]`;
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize any rich text editors if needed
+    let contentEditor;
     if (typeof tinymce !== 'undefined') {
         tinymce.init({
             selector: '#content',
             height: 300,
             plugins: 'lists link image code table',
-            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image | code'
+            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image | code',
+            setup: function(editor) {
+                contentEditor = editor;
+                editor.on('change', function() {
+                    editor.save(); // Save content to textarea
+                });
+            }
         });
+    }
+
+    function showAlert(message, type, container) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        container.insertBefore(alertDiv, container.firstChild);
+        
+        // Auto dismiss after 5 seconds
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
     }
 
     // Form validation and submission
@@ -403,50 +495,118 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Perform validation
-        const title = document.getElementById('title').value.trim();
-        const topic = document.getElementById('topic_id').value;
-        const description = document.getElementById('description').value.trim();
-        const content = document.getElementById('content').value.trim();
+        // Clear previous alerts
+        form.querySelectorAll('.alert').forEach(alert => alert.remove());
         
-        if (!title || !topic || !description || !content) {
-            showAlert('Please fill in all required fields', 'danger', form);
+        // Get form values
+        const title = document.getElementById('title').value.trim();
+        const topic = document.getElementById('topic_id').value.trim();
+        const order = document.getElementById('order').value.trim();
+        const status = document.getElementById('status').value.trim();
+        let content = '';
+        
+        console.log('Form Values:', {
+            title,
+            topic,
+            order,
+            status,
+        });
+        
+        // Get content from TinyMCE if it's initialized
+        if (contentEditor) {
+            content = contentEditor.getContent().trim();
+            // Update the textarea with the current content
+            document.getElementById('content').value = content;
+        } else {
+            content = document.getElementById('content').value.trim();
+        }
+        
+        // Validate all required fields
+        const errors = [];
+        if (!title) errors.push('Title is required');
+        if (!topic) errors.push('Topic is required');
+        if (!content) errors.push('Content is required');
+        if (!order) errors.push('Order is required');
+        if (order && (isNaN(order) || parseInt(order) < 1)) errors.push('Order must be a number greater than 0');
+        if (!status) errors.push('Status is required');
+        // if (status && !['draft', 'published', 'archived'].includes(status)) {
+        //     console.error('Invalid status:', status);
+        //     console.error('Expected: draft, published, or archived');
+        //     errors.push('Invalid status value');
+        // }
+        
+        if (errors.length > 0) {
+            showAlert(errors.join('<br>'), 'danger', form);
             return;
         }
         
+        // Show loading state
+        const submitButton = form.querySelector('[type="submit"]');
+        const originalButtonText = submitButton.innerHTML;
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+        
         // If validation passes, submit the form
         const formData = new FormData(this);
+        
+        // Log form data for debugging
+        console.log('Form Data:');
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
+        
+        // Ensure content is included in form data
+        if (contentEditor) {
+            formData.set('content', content);
+        }
         
         fetch(this.action, {
             method: 'POST',
             body: formData,
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            }
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin'
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showAlert(data.message, 'success', form);
-                const modal = bootstrap.Modal.getInstance(document.getElementById('addLessonModal'));
-                modal.hide();
-                form.reset();
-                // Optionally reload the page or update the lessons list
-                setTimeout(() => window.location.reload(), 1500);
-            } else {
-                showAlert(data.message || 'Error creating lesson', 'danger', form);
+        .then(response => response.json().then(data => {
+            console.log('Server Response:', data);
+            if (!response.ok) {
+                if (data.error) {
+                    console.error('Server Error:', data.error);
+                    console.error('Stack Trace:', data.trace);
+                }
+                throw new Error(data.message || 'An error occurred while saving the lesson');
             }
+            return data;
+        }))
+        .then(data => {
+            showAlert(data.message || 'Lesson created successfully!', 'success', form);
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addLessonModal'));
+            modal.hide();
+            // Reload the page after a short delay
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
         })
         .catch(error => {
-            showAlert('Error creating lesson: ' + error.message, 'danger', form);
+            showAlert(error.message || 'An error occurred while saving the lesson', 'danger', form);
+        })
+        .finally(() => {
+            // Reset button state
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
         });
     });
 
-    // Reset form when modal is closed
-    const modal = document.getElementById('addLessonModal');
-    modal.addEventListener('hidden.bs.modal', function() {
+    // Reset form when modal is hidden
+    const addLessonModal = document.getElementById('addLessonModal');
+    addLessonModal.addEventListener('hidden.bs.modal', function() {
         form.reset();
-        clearAlerts(form);
+        form.querySelectorAll('.alert').forEach(alert => alert.remove());
+        if (contentEditor) {
+            contentEditor.setContent('');
+        }
     });
 
     // Add Topic Form Handling
@@ -459,7 +619,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const name = document.getElementById('name').value.trim();
             const description = document.getElementById('description').value.trim();
             
-            if (!name || !description) {
+            if (!name) {
                 showAlert('Please fill in all required fields', 'danger', topicForm);
                 return;
             }
@@ -496,47 +656,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const topicModal = document.getElementById('addTopicModal');
         topicModal.addEventListener('hidden.bs.modal', function() {
             topicForm.reset();
-            clearAlerts(topicForm);
+            topicForm.querySelectorAll('.alert').forEach(alert => alert.remove());
         });
-    }
-
-    let questionCount = 0;
-
-    function addNewQuestion() {
-        questionCount++;
-        const questionHtml = `
-            <div class="question-block border rounded p-3 mb-3">
-                <div class="mb-3">
-                    <label class="form-label">Question ${questionCount + 1}</label>
-                    <input type="text" class="form-control" name="questions[${questionCount}][text]" required placeholder="Enter question">
-                </div>
-                <div class="mb-2">
-                    <label class="form-label">Options</label>
-                    <div class="input-group mb-2">
-                        <div class="input-group-text">
-                            <input type="radio" name="questions[${questionCount}][correct_option]" value="a" required>
-                        </div>
-                        <input type="text" class="form-control" name="questions[${questionCount}][options][a]" placeholder="Option A" required>
-                    </div>
-                    <div class="input-group mb-2">
-                        <div class="input-group-text">
-                            <input type="radio" name="questions[${questionCount}][correct_option]" value="b" required>
-                        </div>
-                        <input type="text" class="form-control" name="questions[${questionCount}][options][b]" placeholder="Option B" required>
-                    </div>
-                    <div class="input-group mb-2">
-                        <div class="input-group-text">
-                            <input type="radio" name="questions[${questionCount}][correct_option]" value="c" required>
-                        </div>
-                        <input type="text" class="form-control" name="questions[${questionCount}][options][c]" placeholder="Option C" required>
-                    </div>
-                </div>
-                <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.parentElement.remove()">
-                    <i class="bi bi-trash me-2"></i>Remove Question
-                </button>
-            </div>
-        `;
-        document.getElementById('questions-container').insertAdjacentHTML('beforeend', questionHtml);
     }
 
     // Test form submission handling
@@ -578,19 +699,24 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Alert functions
-    function showAlert(message, type, form) {
-        clearAlerts(form);
+    function showAlert(message, type, container) {
+        clearAlerts(container);
         const alertDiv = document.createElement('div');
         alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
         alertDiv.innerHTML = `
             ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         `;
-        form.insertBefore(alertDiv, form.firstChild);
+        container.insertBefore(alertDiv, container.firstChild);
+        
+        // Auto dismiss after 5 seconds
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
     }
 
-    function clearAlerts(form) {
-        const alerts = form.querySelectorAll('.alert');
+    function clearAlerts(container) {
+        const alerts = container.querySelectorAll('.alert');
         alerts.forEach(alert => alert.remove());
     }
 });

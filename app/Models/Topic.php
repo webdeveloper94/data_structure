@@ -14,7 +14,12 @@ class Topic extends Model
     protected $fillable = [
         'name',
         'description',
-        'order'
+        'order',
+        'status'
+    ];
+
+    protected $casts = [
+        'status' => 'string'
     ];
 
     public function lessons()
